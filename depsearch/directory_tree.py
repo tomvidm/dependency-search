@@ -1,9 +1,8 @@
 import os
 
 class Directory:
-	def __init__(self, dirname):
-		self.parentDir = str()
-		self.dir = dirname
+	def __init__(self, path):
+		self.path = path
 		self.subdirs = list()
 
 		self.files = list()
@@ -15,11 +14,11 @@ class DirectoryTree:
 	def __init__(self, dir):
 		self.rootDir = dir
 		self.directoryMap = dict()
+		self.fileList = list()
+		self.subdirList = list()
 
 		self.mapDirectories()
 		self.assignDepth(self.rootDir, 0)
-
-		self.printInfo()
 
 	def mapDirectories(self, ignoreHiddenFiles = True):
 		for root, subdirs, files in os.walk(self.rootDir):
@@ -29,8 +28,10 @@ class DirectoryTree:
 			directory = Directory(root)
 			for file in files:
 				directory.files.append(file)
+				self.fileList.append(file)
 			for subdir in subdirs:
 				directory.subdirs.append(subdir)
+				self.subdirList.append(os.path.join(root, subdir))
 			self.directoryMap[root] = directory
 
 	def assignDepth(self, directory, currentDepth):
@@ -43,12 +44,11 @@ class DirectoryTree:
 		while not len(queue) == 0:
 			current = queue.pop()
 			currentDepth = self.directoryMap[current].depth
-			print '  '*currentDepth, self.directoryMap[current].dir
+			print '  '*currentDepth, self.directoryMap[current].path
 			for subdir in self.directoryMap[current].subdirs:
 				queue.append(os.path.join(current, subdir))
 			for file in self.directoryMap[current].files:
-				print '  '*currentDepth, file
-
+				print '  '*currentDepth, files
 
 			
 		
